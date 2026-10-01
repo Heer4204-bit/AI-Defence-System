@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis-X | Autonomous AI Defence Command Center</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #030712;
+            --panel-bg: rgba(15, 23, 42, 0.75);
+            --panel-border: rgba(56, 189, 248, 0.2);
+            --primary-cyan: #38bdf8;
+            --alert-red: #ef4444;
+            --warning-amber: #f59e0b;
+            --success-green: #10b981;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent-glow: 0 0 15px rgba(56, 189, 248, 0.3);
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            height: 100vh;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.5) 0%, rgba(3, 7, 18, 0.9) 100%),
+                linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+        }
+
+        /* Scanline HUD Effect */
+        body::before {
+            content: " ";
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Header Layout */
+        header {
+            height: 60px;
+            background: rgba(15, 23, 42, 0.9);
+            border-bottom: 1px solid var(--panel-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-family: var(--font-head);
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--primary-cyan);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: var(--accent-glow);
+        }
+
+        .sys-status-bar {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            font-family: var(--font-head);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 12px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--panel-border);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-green);
+            box-shadow: 0 0 8px var(--success-green);
+            animation: pulse 2s infinite;
+        }
+
+        /* Main Grid Structure */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 320px 1fr 360px;
+            grid-template-rows: calc(100vh - 60px);
+            gap: 12px;
+            padding: 12px;
+        }
+
+        .col {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: 100%;
+        }
+
+        /* Futuristic Glass Cards */
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 6px;
+            padding: 14px;
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-cyan), transparent);
+        }
+
+        .card-header {
+            font-family: var(--font-head);
+            font-size: 0.95rem;
+            color: var(--primary-cyan);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-header i {
+            margin-right: 8px;
+        }
+
+        /* 1. Multimodal AI Stream */
+        .multimodal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .feed-box {
+            background: #000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 6px;
+            font-size: 0.75rem;
+            font-family: var(--font-code);
+            overflow: hidden;
+        }
+
+        .feed-box img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.5;
+        }
+
+        .feed-overlay {
+            position: relative;
+            z-index: 2;
+            background: rgba(0,0,0,0.7);
+            padding: 4px;
+            border-radius: 2px;
+        }
+
+        /* 2. Geospatial Intelligence Canvas */
+        .geo-map-container {
+            flex-grow: 1;
+            background: #020617;
+            position: relative;
+            border-radius: 4px;
+            border: 1px solid var(--panel-border);
+            overflow: hidden;
+        }
+
+        #geoMap {
+            width: 100%;
+            height: 100%;
+        }
+
+        .radar-sweep {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 400px; height: 400px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            pointer-events: none;
+        }
+
+        .radar-sweep::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, rgba(56, 189, 248, 0.4), transparent 60deg);
+            animation: spin 4s linear infinite;
+        }
+
+        /* 3. Terminal & AI Security Copilot */
+        .copilot-terminal {
+            flex-grow: 1;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 4px;
+            font-family: var(--font-code);
+            font-size: 0.82rem;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .terminal-logs {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 180px;
+        }
+
+        .log-entry {
+            line-height: 1.3;
+        }
+        .log-entry.ai { color: var(--primary-cyan); }
+        .log-entry.warn { color: var(--warning-amber); }
+        .log-entry.alert { color: var(--alert-red); }
+
+        .terminal-input-group {
+            display: flex;
+            gap: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 8px;
+        }
+
+        .terminal-input-group input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: var(--font-code);
+            outline: none;
+        }
+
+        /* Metrics & Progress Bars */
+        .metric-row {
+            margin-bottom: 10px;
+        }
+        .metric-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-cyan);
+            width: 50%;
+            transition: width 0.5s ease;
+        }
+
+        /* Threat Response Button Matrix */
+        .action-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .btn-action {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--alert-red);
+            color: var(--alert-red);
+            padding: 10px;
+            font-family: var(--font-head);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-action:hover {
+            background: var(--alert-red);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+        }
+
+        .btn-action.secondary {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+
+        .btn-action.secondary:hover {
+            background: var(--primary-cyan);
+            color: #000;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+        }
+
+        /* Keyframe Animations */
+        @keyframes spin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
+        ::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Security Level Banner -->
+    <header>
+        <div class="logo">
+            <i class="fa-solid => fa-shield-halved"></i> AEGIS-X // AI DEFENCE
+        </div>
+        <div class="sys-status-bar">
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                DEFCON 3 : STANDBY
+            </div>
+            <div class="status-badge">
+                <i class="fa-solid fa-lock" style="color: var(--success-green);"></i> ZERO-TRUST: ENFORCED
+            </div>
+            <div class="status-badge" id="clock">00:00:00 UTC</div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Layout -->
+    <div class="dashboard-container">
+        
+        <!-- Left Column: Vision, Edge AI, Zero Trust -->
+        <div class="col">
+            <!-- Multimodal AI Processing -->
+            <div class="card" style="flex: 2;">
+                <div class="card-header">
+                    <span><i class="fa-solid fa-eye"></i> Multimodal AI Telemetry</span>
+                    <i class="fa-solid fa-network-wired"></i>
+                </div>
+                <div class="multimodal-grid">
+                    <div class="feed-box">
+                        <img src="https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=400&q=80" alt="EO Feed">
+                        <div class="feed-overlay">EO/IR Spectrum<br><span style="color:var(--success-green);">● TARGET TRACKING</span></div>
+                    </div>
+                    <div class="feed-box">
+                        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=400&q=80" alt="RF Analysis">
+                        <div class="feed-overlay">RF Spectrum Analysis<br><span style="color:var(--warning-amber);">▲ ANOMALY DETECTED</span></div>
+                    </div>
+                    <div class="feed-box">
+                        <img src="https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?auto=format&fit=crop&w=400&q=80" alt="Acoustic">
+                        <div class="feed-overlay">Acoustic Sensors<br><span style="color:var(--success-green);">● NOISE MATRIX NORMAL</span></div>
+                    </div>
+                    <div class="feed-box">
+                        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80" alt="Cyber Grid">
+                        <div class="feed-overlay">Cyber Neural Mesh<br><span style="color:var(--primary-cyan);">● 100% INTEGRITY</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edge AI Compute Nodes -->
+            <div class="card" style="flex: 1;">
+                <div class="card-header">
+                    <span><i class="fa-solid fa-microchip"></i> Edge AI Processing Nodes</span>
+                </div>
+                <div class="metric-row">
+                    <div class="metric-labels">
+                        <span>Tactical Edge Node Alpha</span>
+                        <span id="node1-val">12ms Latency</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 88%;"></div></div>
+                </div>
+                <div class="metric-row">
+                    <div class="metric-labels">
+                        <span>Airborne Drone Swarm Node</span>
+                        <span id="node2-val">4ms Latency</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 95%; background: var(--success-green);"></div></div>
+                </div>
+            </div>
+
+            <!-- Zero-Trust Architecture -->
+            <div class="card" style="flex: 1;">
+                <div class="card-header">
+                    <span><i class="fa-solid fa-user-shield"></i> Zero-Trust Guardrail</span>
+                </div>
+                <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px;">
+                        <span>mTLS Communication:</span>
+                        <span style="color: var(--success-green);">ACTIVE</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px;">
+                        <span>Continuous Auth Engine:</span>
+                        <span style="color: var(--success-green);">VERIFIED</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Quantum-Resistant Layer:</span>
+                        <span style="color: var(--primary-cyan);">ENCRYPTED</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle Column: Geospatial Map & Sensor Fusion Grid -->
+        <div class="col">
+            <!-- Geospatial Intelligence -->
+            <div class="card" style="flex: 2;">
+                <div class="card-header">
+                    <span><i class="fa-solid fa-earth-americas"></i> Geospatial Intelligence (GEOINT) Radar</span>
+                    <span>SECTOR 07-B</span>
+                </div>
+                <div class="geo-map-container">
+                    <canvas id="geoMap"></canvas>
+                    <div class="radar-sweep"></div>
+                </div>
+            </div>
+
+            <!-- Sensor Fusion Matrix -->
+            <div class="card" style="flex: 1;">
+                <div class="card-header">
+                    <span><i class="fa-solid fa-layer-group"></i> Sensor Fusion Engine</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+                    <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 4px; border: 1px solid var(--panel-border);">
+                        <i class="fa-solid fa-satellite" style="font-size: 1.2rem; color: var(--primary-cyan);"></i>
+                        <div style="font-size: 0.75rem; margin-top: 4px;">SATELLITE</div>
+                        <strong style="color: var(--success-green); font-size: 0.9rem;">SYNCED</strong>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 4px; border: 1px solid var(--panel-border);">
+                        <i class="fa-solid fa-plane-triangle" style="font-size: 1.2rem; color: var(--primary-cyan);"></i>
+                        <div style="font-size: 0.75rem; margin-top: 4px;">UAV TELEMETRY</div>
+                        <strong style="color: var(--success-green); font-size: 0.9rem;">99.8%</strong>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 4px; border: 1px solid var(--panel-border);">
+                        <i class="fa-solid fa-tower-cell" style="font-size: 1.2rem; color: var(--warning-amber);"></i>
+                        <div style="font-size: 0.75rem; margin-top: 4px;">SIGINT ARRAYS</div>
+                        <strong style="color: var(--warning-amber); font-size: 0.9rem;">JAMMING</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: AI Copilot, Threat Matrix, Countermeasures -->
+        <div class="col">
+            <!-- AI Security Copilot -->
+            <div class="card" style="flex: 2;">
+                <div class="card-header">
+                    <span><i class="fa-solid fa-robot"></i> AI Security Copilot</span>
+                    <span style="font-size: 0.7rem; background: var(--primary-cyan); color: #000; padding: 2px 6px; border-radius: 2px;">LLM CORE V4</span>
+                </div>
+                <div class="copilot-terminal">
+                    <div class="terminal-logs" id="terminalLogs">
+                        <div class="log-entry ai">[AEGIS-AI]: System initialized. Multimodal threat engine operational.</div>
+                        <div class="log-entry warn">[WARN]: Unidentified radar signature detected in Sector 07-B.</div>
+                        <div class="log-entry ai">[AEGIS-AI]: Fusing SIGINT + IR data... Object identified as Unmanned Aerial Target. Threat Probability: 87%.</div>
+                    </div>
+                    <div class="terminal-input-group">
+                        <span style="color: var(--primary-cyan);">$</span>
+                        <input type="text" id="copilotInput" placeholder="Ask AI Copilot for tactical analysis..." onkeydown="handleTerminalInput(event)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Threat Assessment Dashboard -->
+            <div class="card" style="flex: 1;">
+                <div class="card-header">
+                    <span><i class="fa-solid fa-triangle-exclamation"></i> Threat Matrix</span>
+                </div>
+                <div class="metric-row">
+                    <div class="metric-labels">
+                        <span>Threat Severity Level</spa

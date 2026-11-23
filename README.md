@@ -20,7 +20,7 @@ The platform features a futuristic command dashboard that brings multiple intell
 
 Its objective is to explore the potential of AI-driven technologies for smarter monitoring, threat analysis, secure communication, and defence decision-support systems.
 
-# 🪖 Defence Technology Inspiration
+# ⌖ Defence Technology Inspiration
 <p align="center">
   <img src="https://img.shields.io/badge/🇮🇳_INDIAN_ARMY-Land_Defence-228B22?style=for-the-badge" />
   <img src="https://img.shields.io/badge/✈️_INDIAN_AIR_FORCE-Aerial_Defence-4169E1?style=for-the-badge" />
@@ -28,7 +28,7 @@ Its objective is to explore the potential of AI-driven technologies for smarter 
   <img src="https://img.shields.io/badge/🔬_DRDO-Defence_Research-FF9933?style=for-the-badge" />
 </p>Inspired by India's defence ecosystem and indigenous technological innovation. This is an independent educational project and is not officially affiliated with, endorsed by, or developed for the Indian Armed Forces or DRDO.
 
-# 🚀 Key Features
+# Key Features ✪:
 
 1. Multimodal AI Telemetry
 - Electro-Optical / Infrared (EO/IR) monitoring concepts.
@@ -126,7 +126,7 @@ Project Domain: Artificial Intelligence | Defence Technology | Cybersecurity
   <b>Building Intelligent Technology for a Safer Tomorrow 🇮🇳</b>
 </p>---
 
-# 🛡️ Inspired by India's Defence Ecosystem
+# ⚔️ Inspired by India's Defence Ecosystem
 
 <p align="center">
   <img src="https://img.shields.io/badge/INDIAN_ARMY- सेवा_परमो_धर्मः-228B22?style=for-the-badge" />

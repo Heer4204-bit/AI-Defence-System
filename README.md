@@ -3,7 +3,7 @@
 
 # 🪖 AEGIS-X – AI Defence System 🇮🇳
 
-<h1 align="center">🛡️ AEGIS-X | AI DEFENCE SYSTEM</h1><h3 align="center">Autonomous AI Defence Command Center</h3><p align="center">
+<h1 align="center">=✪= AEGIS-X | AI DEFENCE SYSTEM</h1><h3 align="center">Autonomous AI Defence Command Center</h3><p align="center">
   <b>Smarter Intelligence • Stronger Security • Safer Tomorrow</b>
 </p><p align="center">
   <a href="https://heer4204-bit.github.io/AI-Defence-System/">
